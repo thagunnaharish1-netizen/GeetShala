@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block title %}{{ song_title }} - Geetshala{% endblock %}
+
+{% block content %}
+<style>
+    /* Back Navigation Panel */
+    .back-nav {
+        margin-bottom: 24px;
+    }
+    .back-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s;
+    }
+    .back-btn:hover {
+        color: var(--text-main);
+    }
+
+    /* Hero Banner Header Components */
+    .album-hero {
+        display: flex;
+        align-items: flex-end;
+        gap: 24px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 30px;
+    }
+
+    .hero-art {
+        width: 230px;
+        height: 230px;
+        background: linear-gradient(135deg, #2c3e50, #000000);
+        border-radius: 8px;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .hero-art i {
+        font-size: 5rem;
+        background: linear-gradient(to bottom, #ffffff, #888888);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .meta-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-main);
+        margin-bottom: 8px;
+    }
+
+    .song-main-title {
+        font-size: 4rem;
+        font-weight: 900;
+        letter-spacing: -2px;
+        line-height: 1.1;
+        margin-bottom: 16px;
+        color: var(--text-main);
+    }
+
+    .hero-meta-footer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .artist-link {
+        color: var(--text-main);
+        text-decoration: none;
+        font-weight: 700;
+    }
+    .artist-link:hover {
+        text-decoration: underline;
+    }
+
+    .meta-bullet {
+        color: var(--text-muted);
+    }
+
+    .meta-stat {
+        color: var(--text-muted);
+    }
+
+    /* Action Control Row */
+    .action-row {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+        margin-bottom: 32px;
+    }
+
+    .primary-play-trigger {
+        width: 56px;
+        height: 56px;
+        background-color: var(--brand-primary);
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .primary-play-trigger:hover {
+        transform: scale(1.05);
+        background-color: var(--brand-hover);
+    }
+    .primary-play-trigger i {
+        color: #000;
+        font-size: 1.5rem;
+        margin-left: 4px;
+    }
+
+    .utility-heart-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 2rem;
+        cursor: pointer;
+        transition: color 0.2s, transform 0.2s;
+    }
+    .utility-heart-btn:hover {
+        color: var(--text-main);
+        transform: scale(1.05);
+    }
+
+    /* Responsive scaling for smaller viewports */
+    @media (max-width: 768px) {
+        .album-hero {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .song-main-title {
+            font-size: 2.5rem;
+        }
+        .hero-meta-footer {
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Navigation Deck -->
+<div class="back-nav">
+    <!-- FontAwesome fallback built in. If using Bootstrap icons, replace with bi-arrow-left -->
+    <a href="{% url 'song_list' %}" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Exploration
+    </a>
+</div>
+
+<!-- Album Banner Card -->
+<div class="album-hero">
+    <div class="hero-art">
+        <i class="fa-solid fa-music"></i>
+    </div>
+    
+    <div class="hero-details">
+        <span class="meta-tag">Single</span>
+        <h1 class="song-main-title">{{ song_title }}</h1>
+        
+        <div class="hero-meta-footer">
+            <a href="#" class="artist-link">{{ song_artist }}</a>
+            <span class="meta-bullet">•</span>
+            <span class="meta-stat">Track ID #{{ song_id }}</span>
+            <span class="meta-bullet">•</span>
+            <span class="meta-stat">Geetshala Premium Audio</span>
+        </div>
+    </div>
+</div>
+
+<!-- Primary Player Action Row -->
+<div class="action-row">
+    <button class="primary-play-trigger" title="Play track">
+        <i class="fa-solid fa-play"></i>
+    </button>
+    <button class="utility-heart-btn" title="Save to Your Library">
+        <i class="fa-regular fa-heart"></i>
+    </button>
+</div>
+
+{% endblock %}

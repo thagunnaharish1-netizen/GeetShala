@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geetshala</title>
+</head>
+<body>
+    header style="background-color: #f2f2f2; padding: 10px;">
+        <h1>Geetshala</h1>
+    </header>
+    <main style="padding: 20px;">    
+    
+        <h1>List of songs</h1>
+        <h2>Click on Song to View Details.</h2>
+        {% if songs %}
+            <p>List of {{ songs|length }} songs</p>
+            {% for song in songs %}
+                <p><a href="{% url 'song_detail' song.id %}">{{ song.title }} by {{ song.artist }}</a></p>
+            {% endfor %}
+        {% else %}
+            <p>No songs available.</p>
+        {% endif %}
+    </main>
+
+    
+</body>
+</html>

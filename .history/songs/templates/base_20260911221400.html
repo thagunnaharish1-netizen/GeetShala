@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Geetshala - Web Player{% endblock %}</title>
+    <!-- Google Fonts for clean typography -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for music icons -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    
+    <style>
+        :root {
+            --bg-base: #000000;
+            --bg-surface: #121212;
+            --bg-surface-hover: #2a2a2a;
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+            --brand-primary: #1ed760; /* Spotify Green */
+            --brand-hover: #1fdf64;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            display: grid;
+            grid-template-rows: 1fr auto; /* Main area + Player bar */
+            overflow: hidden;
+        }
+
+        /* App Layout Container */
+        .app-container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 8px;
+            padding: 8px;
+            height: calc(100vh - 90px); /* Subtract player height */
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            background-color: var(--bg-surface);
+            border-radius: 8px;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 8px;
+            text-decoration: none;
+        }
+
+        .brand-logo i {
+            color: var(--brand-primary);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover, .nav-item.active a {
+            color: var(--text-main);
+            background-color: var(--bg-surface-hover);
+        }
+
+        /* Main Content Area */
+        .main-view {
+            background: linear-gradient(to bottom, #222222, var(--bg-surface) 40%);
+            border-radius: 8px;
+            overflow-y: auto;
+            position: relative;
+            padding: 24px;
+        }
+
+        /* Custom Scrollbar for Main View */
+        .main-view::-webkit-scrollbar {
+            width: 8px;
+        }
+        .main-view::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        .main-view::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Persistent Bottom Player Bar */
+        .player-bar {
+            height: 90px;
+            background-color: #000000;
+            border-top: 1px solid #282828;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            padding: 0 16px;
+        }
+
+        /* Track Info */
+        .now-playing {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .track-art {
+            width: 56px;
+            height: 56px;
+            background-color: #282828;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .track-info .track-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .track-info .track-artist {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Player Controls */
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .control-btn:hover {
+            color: var(--text-main);
+        }
+
+        .control-btn.play-btn {
+            font-size: 2rem;
+            color: var(--text-main);
+        }
+
+        .control-btn.play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .playback-bar {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .progress-slider {
+            flex-grow: 1;
+            height: 4px;
+            background-color: #4f4f4f;
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            width: 30%; /* Mock progress */
+            height: 100%;
+            background-color: var(--text-main);
+            border-radius: 2px;
+        }
+
+        .progress-slider:hover .progress-fill {
+            background-color: var(--brand-primary);
+        }
+
+        /* Volume / Extra Utilities */
+        .volume-controls {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+        }
+
+        .volume-bar {
+            width: 100px;
+            height: 4px;
+            background-color: #4f4f4f;
+            border-radius: 2px;
+        }
+
+        .volume-fill {
+            width: 70%;
+            height: 100%;
+            background-color: var(--text-main);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Layout -->
+        <aside class="sidebar">
+            <a href="{% url 'song_list' %}" class="brand-logo">
+                <i class="fa-solid fa-compact-disc fa-spin-slow"></i> Geetshala
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="{% url 'song_list' %}"><i class="fa-solid fa-house"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fa-solid fa-magnifying-glass"></i> Search</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"><i class="fa-solid fa-book-open"></i> Your Library</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Window Component -->
+        <main class="main-view">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Bottom Audio Player Component -->
+    <footer class="player-bar">
+        <!-- Left Section: Current Song Card -->
+        <div class="now-playing">
+            <div class="track-art">
+                <i class="fa-solid fa-music text-muted"></i>
+            </div>
+            <div class="track-info">
+                <div class="track-name">Select a song</div>
+                <div class="track-artist">Artist</div>
+            </div>
+        </div>
+
+        <!-- Center Section: Playback Dashboard -->
+        <div class="player-controls">
+            <div class="control-buttons">
+                <button class="control-btn"><i class="fa-solid fa-shuffle"></i></button>
+                <button class="control-btn"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="control-btn play-btn"><i class="fa-solid fa-circle-play"></i></button>
+                <button class="control-btn"><i class="fa-solid fa-forward-step"></i></button>
+                <button class="control-btn"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            <div class="playback-bar">
+                <span>0:00</span>
+                <div class="progress-slider">
+                    <div class="progress-fill"></div>
+                </div>
+                <span>0:00</span>
+            </div>
+        </div>
+
+        <!-- Right Section: Utility Deck -->
+        <div class="volume-controls">
+            <i class="fa-solid fa-list-ul"></i>
+            <i class="fa-solid fa-volume-high"></i>
+            <div class="volume-bar">
+                <div class="volume-fill"></div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% block title %}Explore Music - Geetshala{% endblock %}
+
+{% block content %}
+<style>
+    /* Content Header Section */
+    .content-header {
+        margin-bottom: 32px;
+    }
+    .content-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        letter-spacing: -0.5px;
+    }
+    .content-header p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    /* Grid Layout for Featured Music / Albums */
+    .section-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+    }
+    
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 40px;
+    }
+
+    .song-card {
+        background-color: #181818;
+        padding: 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        position: relative;
+    }
+
+    .song-card:hover {
+        background-color: var(--bg-surface-hover);
+    }
+
+    .card-image {
+        width: 100%;
+        aspect-ratio: 1;
+        background-color: #282828;
+        border-radius: 4px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .card-image i {
+        font-size: 3rem;
+        color: var(--text-muted);
+    }
+
+    /* Floating Play Button Animation */
+    .card-play-btn {
+        width: 48px;
+        height: 48px;
+        background-color: var(--brand-primary);
+        border-radius: 50%;
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .card-play-btn i {
+        color: #000;
+        font-size: 1.25rem;
+        margin-left: 2px; /* Center alignment balance */
+    }
+
+    .song-card:hover .card-play-btn {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .card-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-subtitle {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Alternative Track List Style */
+    .track-list-container {
+        background-color: rgba(0,0,0,0.2);
+        border-radius: 6px;
+        padding: 16px;
+    }
+
+    .track-row-header {
+        display: grid;
+        grid-template-columns: 40px 1fr 1fr;
+        padding: 8px 16px;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        margin-bottom: 8px;
+    }
+
+    .track-row {
+        display: grid;
+        grid-template-columns: 40px 1fr 1fr;
+        padding: 12px 16px;
+        align-items: center;
+        border-radius: 4px;
+        text-decoration: none;
+        color: inherit;
+        transition: background-color 0.2s;
+    }
+
+    .track-row:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .track-number {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .track-main-info {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-main);
+    }
+
+    .track-row:hover .track-main-info {
+        color: var(--brand-primary);
+    }
+
+    .track-artist-info {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+</style>
+
+<div class="content-header">
+    <h1>Welcome to Geetshala</h1>
+    {% if songs %}
+        <p>Discovering {{ songs|length }} premium tracks curated just for you</p>
+    {% endif %}
+</div>
+
+{% if songs %}
+    <!-- Layout 1: Grid Cards View -->
+    <h2 class="section-title">Recommended Mix</h2>
+    <div class="card-grid">
+        {% for song in songs %}
+            <a href="{% url 'song_detail' song.id %}" class="song-card">
+                <div class="card-image">
+                    <i class="fa-solid fa-music"></i>
+                    <div class="card-play-btn">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                </div>
+                <div class="card-title">{{ song.title }}</div>
+                <div class="card-subtitle">{{ song.artist }}</div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Layout 2: Detailed Tracklist View -->
+    <h2 class="section-title">All Tracks</h2>
+    <div class="track-list-container">
+        <div class="track-row-header">
+            <div>#</div>
+            <div>Title</div>
+            <div>Artist</div>
+        </div>
+        
+        {% for song in songs %}
+            <a href="{% url 'song_detail' song.id %}" class="track-row">
+                <div class="track-number">{{ forloop.counter }}</div>
+                <div class="track-main-info">{{ song.title }}</div>
+                <div class="track-artist-info">{{ song.artist }}</div>
+            </a>
+        {% endfor %}
+    </div>
+
+{% else %}
+    <div style="text-align: center; padding: 60px 0; color: var(--text-muted);">
+        <i class="fa-solid fa-compact-disc fa-3x" style="margin-bottom: 16px; opacity: 0.5;"></i>
+        <p>No songs available right now. Check back soon!</p>
+    </div>
+{% endif %}
+
+{% endblock %}

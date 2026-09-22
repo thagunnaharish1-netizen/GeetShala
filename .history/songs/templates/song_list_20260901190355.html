@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geetshala</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'song_list' %}">Home</a></li>
+                <li><a href="{% url 'song_detail' 1 %}">Song Details</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>List of songs</h1>
+        <h2>Click on Song to View Details.</h2>
+        {% if songs1 %}
+            <p>List of {{ songs1|length }} songs</p>
+        {% for song in songs %}
+            <p><a href="{% url 'song_detail' song.id %}">{{ song.title }} by {{ song.artist }}</a></p>
+        {% endfor %}
+    {% else %}
+        <p>No songs available.</p>
+    {% endif %}
+
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 Geetshala. All rights reserved.</p>  
+    </footer>
+
+    
+</body>
+</html>
